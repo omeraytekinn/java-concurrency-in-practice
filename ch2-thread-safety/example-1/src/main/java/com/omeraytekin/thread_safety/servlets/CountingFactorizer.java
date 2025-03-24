@@ -4,26 +4,35 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 import jakarta.servlet.GenericServlet;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletRequest;
 import jakarta.servlet.ServletResponse;
 
-public class StatelessFactorizer extends GenericServlet {
+public class CountingFactorizer extends GenericServlet {
+    private AtomicLong count = new AtomicLong(0);
+
     @Override
     public void service(ServletRequest req, ServletResponse resp) throws ServletException, IOException {
         BigInteger i = extractFromRequest(req);
+        count.incrementAndGet();
         BigInteger[] factors = factor(i);
         encodeIntoResponse(resp, factors);
+    }
+
+    public long getCount() {
+        return count.get();
     }
 
     private void encodeIntoResponse(ServletResponse resp, BigInteger[] factors) throws IOException {
         StringBuilder sb = new StringBuilder();
         resp.setContentType("text/plain");
+        sb.append("Count" + count + ": \n");
         sb.append("Factors: \n");
         for (BigInteger factor : factors) {
-            sb.append("- " + factor + "\n");
+            sb.append(", " + factor + "\n");
         }
         resp.getWriter().println(sb.toString());
     }

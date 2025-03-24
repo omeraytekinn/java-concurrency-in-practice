@@ -7,6 +7,7 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.startup.Tomcat;
 
 import com.omeraytekin.thread_safety.servlets.StatelessFactorizer;
+import com.omeraytekin.thread_safety.servlets.UnsafeCountingFactorizer;
 
 import jakarta.servlet.GenericServlet;
 
@@ -21,12 +22,16 @@ public class Main {
 
         Context context = tomcat.addContext(contextPath, docBase);
 
-        GenericServlet servlet = new StatelessFactorizer();
-        String servletName = "StatelessFactorizer";
-        String urlPattern = "/stateless-factorizer";
-
-        tomcat.addServlet(contextPath, servletName, servlet);
-        context.addServletMappingDecoded(urlPattern, servletName);
+        GenericServlet servletSF = new StatelessFactorizer();
+        GenericServlet servletUCF = new UnsafeCountingFactorizer();
+        String servletNameSF = "StatelessFactorizer";
+        String urlPatternSF = "/stateless-factorizer";
+        String servletNameUCF = "UnsafeCountingFactorizer";
+        String urlPatternUCF = "/unsafe-counting-factorizer";
+        tomcat.addServlet(contextPath, servletNameSF, servletSF);
+        tomcat.addServlet(contextPath, servletNameUCF, servletUCF);
+        context.addServletMappingDecoded(urlPatternSF, servletNameSF);
+        context.addServletMappingDecoded(urlPatternUCF, servletNameUCF);
         tomcat.start();
         tomcat.getServer().await();
     }
