@@ -41,6 +41,7 @@ public class UnsafeCountingFactorizer extends GenericServlet {
         if (val == null) {
             return BigInteger.ZERO;
         }
+        
         try {
             return new BigInteger(val);
         } catch (NumberFormatException e) {
